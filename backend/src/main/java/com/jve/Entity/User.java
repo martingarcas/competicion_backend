@@ -1,11 +1,17 @@
 package com.jve.Entity;
 
 import jakarta.persistence.*;
+
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "User")
-public class User {
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +32,14 @@ public class User {
     public User() {}
 
     public User(Long idUser, String role, String username, String password, String nombre, String apellidos, String dni, Especialidad especialidad) {
-        this.idUser = idUser;
-        this.role = role;
-        this.username = username;
-        this.password = password;
-        this.nombre = nombre;
-        this.apellidos = apellidos;
-        this.dni = dni;
-        this.especialidad = especialidad;
+        this.idUser         = idUser;
+        this.role           = role;
+        this.username       = username;
+        this.password       = password;
+        this.nombre         = nombre;
+        this.apellidos      = apellidos;
+        this.dni            = dni;
+        this.especialidad   = especialidad;
     }
 
     public Long getIdUser() {
@@ -103,5 +109,11 @@ public class User {
     @Override
     public String toString() {
         return idUser + " - " + username + " - " + role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
     }
 }

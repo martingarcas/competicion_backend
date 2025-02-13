@@ -31,11 +31,11 @@ public class Evaluacion {
     public Evaluacion() {}
 
     public Evaluacion(Long idEvaluacion, Double notaFinal, Participante participante, Prueba prueba, User user) {
-        this.idEvaluacion = idEvaluacion;
-        this.notaFinal = notaFinal;
-        this.participante = participante;
-        this.prueba = prueba;
-        this.user = user;
+        this.idEvaluacion   = idEvaluacion;
+        this.notaFinal      = notaFinal;
+        this.participante   = participante;
+        this.prueba         = prueba;
+        this.user           = user;
     }
 
     public Long getIdEvaluacion() {
