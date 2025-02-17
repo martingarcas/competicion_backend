@@ -1,10 +1,23 @@
 package com.jve.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "Participante")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Participante {
 
     @Id
@@ -20,58 +33,8 @@ public class Participante {
     @JsonBackReference
     private Especialidad especialidad;
 
-    public Participante() {}
+    @OneToMany(mappedBy = "participante", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Evaluacion> evaluaciones = new ArrayList<>();
 
-    public Participante(Long idParticipante, String nombre, String apellidos, String centro, Especialidad especialidad) {
-        this.idParticipante = idParticipante;
-        this.nombre = nombre;
-        this.apellidos = apellidos;
-        this.centro = centro;
-        this.especialidad = especialidad;
-    }
-
-    public Long getIdParticipante() {
-        return idParticipante;
-    }
-
-    public void setIdParticipante(Long idParticipante) {
-        this.idParticipante = idParticipante;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public String getCentro() {
-        return centro;
-    }
-
-    public void setCentro(String centro) {
-        this.centro = centro;
-    }
-
-    public Especialidad getEspecialidad() {
-        return especialidad;
-    }
-
-    public void setEspecialidad(Especialidad especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    @Override
-    public String toString() {
-        return idParticipante + " - " + nombre + " " + apellidos;
-    }
 }

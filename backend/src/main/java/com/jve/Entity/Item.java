@@ -1,9 +1,22 @@
 package com.jve.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "Item")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
 
     @Id
@@ -16,60 +29,9 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "Prueba_idPrueba")
+    @JsonBackReference
     private Prueba prueba;
 
-    public Item() {}
-
-    public Item(Long idItem, String descripcion, Integer peso, Integer gradosConsecucion, Prueba prueba) {
-        this.idItem = idItem;
-        this.descripcion = descripcion;
-        this.peso = peso;
-        this.gradosConsecucion = gradosConsecucion;
-        this.prueba = prueba;
-    }
-
-    public Long getIdItem() {
-        return idItem;
-    }
-
-    public void setIdItem(Long idItem) {
-        this.idItem = idItem;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public Integer getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Integer peso) {
-        this.peso = peso;
-    }
-
-    public Integer getGradosConsecucion() {
-        return gradosConsecucion;
-    }
-
-    public void setGradosConsecucion(Integer gradosConsecucion) {
-        this.gradosConsecucion = gradosConsecucion;
-    }
-
-    public Prueba getPrueba() {
-        return prueba;
-    }
-
-    public void setPrueba(Prueba prueba) {
-        this.prueba = prueba;
-    }
-
-    @Override
-    public String toString() {
-        return idItem + " - " + descripcion;
-    }
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EvaluacionItem> evaluacionItems = new ArrayList<>();
 }

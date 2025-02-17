@@ -1,10 +1,9 @@
 package com.jve.Service;
 
-import org.springframework.stereotype.Service;
 import com.jve.Entity.Prueba;
 import com.jve.Repository.PruebaRepository;
 import lombok.AllArgsConstructor;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +22,18 @@ public class PruebaService {
     }
 
     public Prueba create(Prueba prueba) {
-        if (prueba.getEnunciado() == null || prueba.getPuntuacionMaxima() == null) {
-            return null;
-        }
         return repository.save(prueba);
+    }
+
+    public Optional<Prueba> update(Long id, Prueba prueba) {
+        return repository.findById(id).map(existingPrueba -> {
+            existingPrueba.setEnunciado(prueba.getEnunciado());
+            existingPrueba.setPuntuacionMaxima(prueba.getPuntuacionMaxima());
+            return repository.save(existingPrueba);
+        });
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }

@@ -1,11 +1,23 @@
 package com.jve.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "Prueba")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Prueba {
 
     @Id
@@ -20,52 +32,11 @@ public class Prueba {
     @JsonBackReference
     private Especialidad especialidad;
 
-    @OneToMany(mappedBy = "prueba")
-    private List<Item> items;
+    @OneToMany(mappedBy = "prueba", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Item> items = new ArrayList<>();
 
-    public Prueba() {}
-
-    public Prueba(Long idPrueba, String enunciado, Integer puntuacionMaxima, Especialidad especialidad) {
-        this.idPrueba = idPrueba;
-        this.enunciado = enunciado;
-        this.puntuacionMaxima = puntuacionMaxima;
-        this.especialidad = especialidad;
-    }
-
-    public Long getIdPrueba() {
-        return idPrueba;
-    }
-
-    public void setIdPrueba(Long idPrueba) {
-        this.idPrueba = idPrueba;
-    }
-
-    public String getEnunciado() {
-        return enunciado;
-    }
-
-    public void setEnunciado(String enunciado) {
-        this.enunciado = enunciado;
-    }
-
-    public Integer getPuntuacionMaxima() {
-        return puntuacionMaxima;
-    }
-
-    public void setPuntuacionMaxima(Integer puntuacionMaxima) {
-        this.puntuacionMaxima = puntuacionMaxima;
-    }
-
-    public Especialidad getEspecialidad() {
-        return especialidad;
-    }
-
-    public void setEspecialidad(Especialidad especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    @Override
-    public String toString() {
-        return idPrueba + " - " + enunciado;
-    }
+    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Evaluacion> evaluaciones = new ArrayList<>();
 }

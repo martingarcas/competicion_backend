@@ -1,31 +1,39 @@
 package com.jve.Service;
 
-import org.springframework.stereotype.Service;
-import com.jve.Entity.User;
 import com.jve.Repository.UserRepository;
-import lombok.AllArgsConstructor;
+import com.jve.converter.UserConverter;
+import com.jve.dto.UserDTO;
+import com.jve.Entity.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final UserConverter userConverter;
+    private final PasswordEncoder passwordEncoder;
 
-    public List<User> findAll() {
-        return repository.findAll();
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<User> findById(Long id) {
-        return repository.findById(id);
+    public Optional<UserDTO> getUserById(Long id) {
+        return userRepository.findById(id).map(userConverter::toDTO);
     }
 
-    public User create(User user) {
-        if (user.getUsername() == null || user.getPassword() == null || user.getDni() == null) {
-            return null;
-        }
-        return repository.save(user);
+    public UserDTO createUser(UserDTO userDTO) {
+        User user = userConverter.toEntity(userDTO);
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        User savedUser = userRepository.save(user);
+        return userConverter.toDTO(savedUser);
     }
 }

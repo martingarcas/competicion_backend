@@ -1,10 +1,23 @@
 package com.jve.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "Evaluacion")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Evaluacion {
 
     @Id
@@ -15,71 +28,20 @@ public class Evaluacion {
 
     @ManyToOne
     @JoinColumn(name = "Participante_idParticipante")
+    @JsonBackReference
     private Participante participante;
 
     @ManyToOne
     @JoinColumn(name = "Prueba_idPrueba")
+    @JsonBackReference
     private Prueba prueba;
 
     @ManyToOne
     @JoinColumn(name = "User_idUser")
+    @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "evaluacion")
-    private List<EvaluacionItem> evaluacionItems;
-
-    public Evaluacion() {}
-
-    public Evaluacion(Long idEvaluacion, Double notaFinal, Participante participante, Prueba prueba, User user) {
-        this.idEvaluacion   = idEvaluacion;
-        this.notaFinal      = notaFinal;
-        this.participante   = participante;
-        this.prueba         = prueba;
-        this.user           = user;
-    }
-
-    public Long getIdEvaluacion() {
-        return idEvaluacion;
-    }
-
-    public void setIdEvaluacion(Long idEvaluacion) {
-        this.idEvaluacion = idEvaluacion;
-    }
-
-    public Double getNotaFinal() {
-        return notaFinal;
-    }
-
-    public void setNotaFinal(Double notaFinal) {
-        this.notaFinal = notaFinal;
-    }
-
-    public Participante getParticipante() {
-        return participante;
-    }
-
-    public void setParticipante(Participante participante) {
-        this.participante = participante;
-    }
-
-    public Prueba getPrueba() {
-        return prueba;
-    }
-
-    public void setPrueba(Prueba prueba) {
-        this.prueba = prueba;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public String toString() {
-        return idEvaluacion + " - Nota: " + notaFinal;
-    }
+    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<EvaluacionItem> evaluacionItems = new ArrayList<>();
 }

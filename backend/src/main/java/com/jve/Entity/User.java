@@ -1,119 +1,54 @@
 package com.jve.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "User")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUser;
 
-    private String role;
+    @Column(nullable = false)
+    private String role = "experto";
+    @Column(nullable = false, unique = true)
     private String username;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String nombre;
+    @Column(nullable = false)
     private String apellidos;
+    @Column(nullable = false)
     private String dni;
 
     @ManyToOne
-    @JoinColumn(name = "Especialidad_idEspecialidad")
+    @JoinColumn(name = "Especialidad_idEspecialidad", referencedColumnName = "idEspecialidad")
     @JsonBackReference
     private Especialidad especialidad;
 
-    public User() {}
-
-    public User(Long idUser, String role, String username, String password, String nombre, String apellidos, String dni, Especialidad especialidad) {
-        this.idUser         = idUser;
-        this.role           = role;
-        this.username       = username;
-        this.password       = password;
-        this.nombre         = nombre;
-        this.apellidos      = apellidos;
-        this.dni            = dni;
-        this.especialidad   = especialidad;
-    }
-
-    public Long getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(Long idUser) {
-        this.idUser = idUser;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public String getDni() {
-        return dni;
-    }
-
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
-    public Especialidad getEspecialidad() {
-        return especialidad;
-    }
-
-    public void setEspecialidad(Especialidad especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    @Override
-    public String toString() {
-        return idUser + " - " + username + " - " + role;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.toUpperCase()));
     }
+
+    
 }

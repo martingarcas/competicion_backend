@@ -1,10 +1,9 @@
 package com.jve.Service;
 
-import org.springframework.stereotype.Service;
 import com.jve.Entity.Especialidad;
 import com.jve.Repository.EspecialidadRepository;
 import lombok.AllArgsConstructor;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +22,18 @@ public class EspecialidadService {
     }
 
     public Especialidad create(Especialidad especialidad) {
-        if (especialidad.getNombre() == null || especialidad.getCodigo() == null) {
-            return null;
-        }
         return repository.save(especialidad);
+    }
+
+    public Optional<Especialidad> update(Long id, Especialidad especialidad) {
+        return repository.findById(id).map(existingEspecialidad -> {
+            existingEspecialidad.setNombre(especialidad.getNombre());
+            existingEspecialidad.setCodigo(especialidad.getCodigo());
+            return repository.save(existingEspecialidad);
+        });
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }

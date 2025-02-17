@@ -1,10 +1,9 @@
 package com.jve.Service;
 
-import org.springframework.stereotype.Service;
 import com.jve.Entity.Evaluacion;
 import com.jve.Repository.EvaluacionRepository;
 import lombok.AllArgsConstructor;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +22,17 @@ public class EvaluacionService {
     }
 
     public Evaluacion create(Evaluacion evaluacion) {
-        if (evaluacion.getNotaFinal() == null) {
-            return null;
-        }
         return repository.save(evaluacion);
+    }
+
+    public Optional<Evaluacion> update(Long id, Evaluacion evaluacion) {
+        return repository.findById(id).map(existingEvaluacion -> {
+            existingEvaluacion.setNotaFinal(evaluacion.getNotaFinal());
+            return repository.save(existingEvaluacion);
+        });
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }
