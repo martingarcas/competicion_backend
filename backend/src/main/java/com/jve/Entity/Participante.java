@@ -36,5 +36,4 @@ public class Participante {
     @OneToMany(mappedBy = "participante", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Evaluacion> evaluaciones = new ArrayList<>();
-
 }

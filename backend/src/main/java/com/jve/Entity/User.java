@@ -1,6 +1,7 @@
 package com.jve.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails{
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,16 +30,22 @@ public class User implements UserDetails{
 
     @Column(nullable = false)
     private String role = "experto";
+    
     @Column(nullable = false, unique = true)
     private String username;
+
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
+
+    @Column()
     private String nombre;
-    @Column(nullable = false)
+
+    @Column()
     private String apellidos;
-    @Column(nullable = false)
-    private String dni;
+
+    @Column(nullable = false, unique = true)
+    @Email(message = "El email debe tener un formato válido")
+    private String email;
 
     @ManyToOne
     @JoinColumn(name = "Especialidad_idEspecialidad", referencedColumnName = "idEspecialidad")
@@ -49,6 +56,4 @@ public class User implements UserDetails{
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.toUpperCase()));
     }
-
-    
 }

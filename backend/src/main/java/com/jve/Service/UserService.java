@@ -32,6 +32,9 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO) {
         User user = userConverter.toEntity(userDTO);
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("experto");
+        }
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         User savedUser = userRepository.save(user);
         return userConverter.toDTO(savedUser);

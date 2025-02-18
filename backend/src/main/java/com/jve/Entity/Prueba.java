@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "Prueba")
@@ -36,7 +36,7 @@ public class Prueba {
     @JsonManagedReference
     private List<Item> items = new ArrayList<>();
 
-    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "prueba", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Evaluacion> evaluaciones = new ArrayList<>();
 }
