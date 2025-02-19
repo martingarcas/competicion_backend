@@ -2,6 +2,7 @@ package com.jve.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.jve.Entity.Especialidad;
@@ -43,10 +44,20 @@ public class EspecialidadController {
     }
 
     @PostMapping
-    public ResponseEntity<EspecialidadDTO> create(@RequestBody EspecialidadDTO especialidadDTO) {
+    @PreAuthorize("hasAuthority('admin')")
+    public ResponseEntity<?> create(@RequestBody EspecialidadDTO especialidadDTO) {
         if (especialidadDTO.getNombre() == null || especialidadDTO.getCodigo() == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("El nombre y código son obligatorios.");
         }
+        
+        // Validamos si ya existe
+        if (especialidadService.existsByNombre(especialidadDTO.getNombre())) {
+            return ResponseEntity.badRequest().body("Ya existe una especialidad con este nombre.");
+        }
+        if (especialidadService.existsByCodigo(especialidadDTO.getCodigo())) {
+            return ResponseEntity.badRequest().body("Ya existe una especialidad con este código.");
+        }
+
         EspecialidadDTO savedEspecialidad = especialidadService.create(especialidadDTO);
         return ResponseEntity.status(201).body(savedEspecialidad);
     }
@@ -60,17 +71,11 @@ public class EspecialidadController {
 
     @GetMapping("/{id}/usuarios")
     public ResponseEntity<List<UserResponseDTO>> obtenerUsuariosPorEspecialidad(@PathVariable Long id) {
-        Optional<Especialidad> especialidad = especialidadRepository.findById(id);
-        
-        if (especialidad.isPresent()) {
-            List<UserResponseDTO> usuarios = especialidad.get().getUsuarios()
-                .stream()
-                .map(userConverter::toResponseDTO)  // Convierte cada usuario a UserResponseDTO
-                .collect(Collectors.toList());
-            return ResponseEntity.ok(usuarios);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return especialidadService.findById(id)
+                .map(especialidad -> ResponseEntity.ok(
+                        especialidadService.obtenerUsuariosPorEspecialidad(id)
+                ))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }

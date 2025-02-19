@@ -6,4 +6,7 @@ import com.jve.Entity.Especialidad;
 
 @Repository
 public interface EspecialidadRepository extends JpaRepository<Especialidad, Long> {
+
+	boolean existsByNombre(String nombre);
+	boolean existsByCodigo(String codigo);
 }
