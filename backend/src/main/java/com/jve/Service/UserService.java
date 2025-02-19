@@ -4,6 +4,7 @@ import com.jve.Repository.UserRepository;
 import com.jve.converter.UserConverter;
 import com.jve.dto.UserDTO;
 import com.jve.Entity.User;
+import com.jve.Entity.Especialidad;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,22 +21,21 @@ public class UserService {
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
 
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(userConverter::toDTO)
-                .collect(Collectors.toList());
+    public List<User> getAllUsers() {  // 🔹 Devuelve User en vez de UserDTO
+        return userRepository.findAll();
     }
 
-    public Optional<UserDTO> getUserById(Long id) {
-        return userRepository.findById(id).map(userConverter::toDTO);
+    public Optional<User> getUserById(Long id) {  // 🔹 Devuelve Optional<User>
+        return userRepository.findById(id);
     }
 
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDTO createUser(UserDTO userDTO, Especialidad especialidad) {
         User user = userConverter.toEntity(userDTO);
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole("experto");
         }
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setEspecialidad(especialidad); // Asigna la especialidad al usuario
         User savedUser = userRepository.save(user);
         return userConverter.toDTO(savedUser);
     }

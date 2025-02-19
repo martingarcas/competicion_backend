@@ -3,7 +3,9 @@ package com.jve.Controller;
 import com.jve.dto.LoginRequest;
 import com.jve.dto.LoginResponse;
 import com.jve.dto.UserDTO;
+import com.jve.Entity.Especialidad;
 import com.jve.Entity.User;
+import com.jve.Repository.EspecialidadRepository;
 import com.jve.Security.JwtTokenProvider;
 import com.jve.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +27,19 @@ public class AuthController {
     private AuthenticationManager authManager;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private EspecialidadRepository especialidadRepository;
 
 
 
     @PostMapping("/auth/register")
     public UserDTO save(@RequestBody UserDTO userDTO){
-        return this.userService.createUser(userDTO);
+        // Buscar la especialidad en la base de datos
+        Especialidad especialidad = especialidadRepository.findById(userDTO.getEspecialidadId())
+                .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
+
+        // Llamar a createUser con la especialidad
+        return this.userService.createUser(userDTO, especialidad);
     }
 
     @PostMapping("/auth/login")

@@ -33,13 +33,16 @@ public class JwtTokenProvider {
         User user = (User) authentication.getPrincipal();
 
         return Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), SignatureAlgorithm.HS512)
-                .setHeaderParam("typ", "JWT")
-                .setSubject(Long.toString(user.getIdUser()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + (jwtDurationSeconds * 1000)))
-                .claim("username", user.getUsername())
-                .compact();
+            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), SignatureAlgorithm.HS512)
+            .setHeaderParam("typ", "JWT")
+            .setSubject(Long.toString(user.getIdUser()))
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + (jwtDurationSeconds * 1000)))
+            .claim("username", user.getUsername())
+            .claim("roles", user.getAuthorities().stream()
+                    .map(role -> role.getAuthority()) // Extraer nombres de roles
+                    .toList()) // Convertir a lista
+            .compact();
 
     }
 

@@ -3,7 +3,7 @@ package com.jve.dto;
 import lombok.Data;
 
 @Data
-public class UserDTO {
+public class UserResponseDTO {
     private Long id;
     private String username;
     private String nombre;
@@ -11,5 +11,4 @@ public class UserDTO {
     private String email;
     private String role;
     private Long especialidadId;
-    private String password;
 }

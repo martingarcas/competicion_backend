@@ -28,31 +28,24 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
    @Override
-protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
 
-    String requestURI = request.getRequestURI();
-
-    if (requestURI.equals("/auth/register")) {
-        filterChain.doFilter(request, response);
-        return;
-    }
-
-    String token = this.extractToken(request);
-    if (StringUtils.hasLength(token) && tokenProvider.isValidToken(token)) {
+        String token = this.extractToken(request);
+        if (StringUtils.hasLength(token) && tokenProvider.isValidToken(token)) {
         String username = tokenProvider.getUsernameFromToken(token);
         UserDetails userDetails = userService.loadUserByUsername(username);
 
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
-                userDetails.getAuthorities());
+                userDetails.getAuthorities()); // Aquí se asignan correctamente los roles
 
         SecurityContextHolder.getContext().setAuthentication(auth);
-    }
+        }
 
-    filterChain.doFilter(request, response);
-}
+        filterChain.doFilter(request, response);
+    }
 
 
     private String extractToken(HttpServletRequest request) {
