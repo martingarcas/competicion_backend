@@ -23,7 +23,6 @@ public class UserConverter {
         return modelMapper.map(userDTO, User.class);
     }
 
-    // 🔹 Nuevo método para UserResponseDTO (sin password)
     public UserResponseDTO toResponseDTO(User user) {
         return modelMapper.map(user, UserResponseDTO.class);
     }

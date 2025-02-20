@@ -30,6 +30,7 @@ public class EspecialidadController {
 
     private final UserConverter userConverter;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('EXPERTO')")
     @GetMapping
     public ResponseEntity<List<EspecialidadDTO>> findAll() {
         List<EspecialidadDTO> especialidades = especialidadService.findAll();
@@ -50,7 +51,6 @@ public class EspecialidadController {
             return ResponseEntity.badRequest().body("El nombre y código son obligatorios.");
         }
         
-        // Validamos si ya existe
         if (especialidadService.existsByNombre(especialidadDTO.getNombre())) {
             return ResponseEntity.badRequest().body("Ya existe una especialidad con este nombre.");
         }

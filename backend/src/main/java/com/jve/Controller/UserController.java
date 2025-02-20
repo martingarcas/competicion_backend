@@ -53,4 +53,21 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.createUser(userDTO, especialidad.get()));
     }
+
+    @GetMapping("/expertos")
+    public ResponseEntity<List<UserResponseDTO>> getAllExperts() {
+        List<UserResponseDTO> experts = userService.getAllExperts()
+            .stream()
+            .map(userConverter::toResponseDTO) // 🔹 Convertimos a UserResponseDTO
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(experts);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
+        Optional<UserResponseDTO> updatedUser = userService.updateUser(id, userDTO);
+        return updatedUser.map(ResponseEntity::ok)
+                        .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }
