@@ -47,7 +47,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/participantes").permitAll()
                 .requestMatchers("/api/participantes/**").hasAuthority("ROLE_EXPERTO")
                 .requestMatchers("/api/especialidades").permitAll()
-                .requestMatchers("/api/users/expertos").hasAuthority("ROLE_ADMIN") 
+                .requestMatchers("/api/users/expertos").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/pruebas/**").hasAuthority("ROLE_EXPERTO") 
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

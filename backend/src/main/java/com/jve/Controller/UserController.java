@@ -24,6 +24,23 @@ public class UserController {
     private final EspecialidadRepository especialidadRepository;
     private final UserConverter userConverter;
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+        // Si el rol es nulo, lo dejamos como "experto" por defecto
+        if (userDTO.getRole() == null || userDTO.getRole().isEmpty()) {
+            userDTO.setRole("experto");
+        }
+
+        // Guardamos el usuario sin especialidad para admins
+        Especialidad especialidad = null;
+        if (userDTO.getEspecialidadId() != null) {
+            especialidad = especialidadRepository.findById(userDTO.getEspecialidadId()).orElse(null);
+        }
+
+        UserDTO newUser = userService.createUser(userDTO, especialidad);
+        return ResponseEntity.ok(newUser);
+    }
+
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<UserResponseDTO> users = userService.getAllUsers()

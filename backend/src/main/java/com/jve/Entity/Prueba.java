@@ -24,11 +24,13 @@ public class Prueba {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPrueba;
 
+    @Column(nullable = false)
     private String enunciado;
+
     private Integer puntuacionMaxima;
 
     @ManyToOne
-    @JoinColumn(name = "Especialidad_idEspecialidad")
+    @JoinColumn(name = "especialidad_id", nullable = false)
     @JsonBackReference
     private Especialidad especialidad;
 

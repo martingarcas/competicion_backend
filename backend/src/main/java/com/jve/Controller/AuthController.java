@@ -54,12 +54,16 @@ public class AuthController {
             // Generamos el token
             String token = this.jwtTokenProvider.generateToken(authentication);
 
-            // Retornamos la respuesta de login
+            // Obtener el ID de la especialidad
+            Long especialidadId = (user.getEspecialidad() != null) ? user.getEspecialidad().getIdEspecialidad() : null;
+
+            // Retornamos la respuesta de login con la especialidad incluida
             return new LoginResponse(user.getUsername(),
                     user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList(),
-                    token);
+                    token,
+                    especialidadId);
         } catch (BadCredentialsException e) {
-            throw new RuntimeException("Credenciales incorrectas", e);  // Puedes usar una excepción personalizada o manejar el error como desees.
+            throw new RuntimeException("Credenciales incorrectas", e);
         }
     }
 
