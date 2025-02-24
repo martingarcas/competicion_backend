@@ -89,32 +89,34 @@ public class PruebaService {
     }
 
     public ResponseEntity<Resource> descargarEnunciado(Long id) {
-        Optional<Prueba> pruebaOpt = repository.findById(id);
-        if (pruebaOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    
-        String nombreArchivo = pruebaOpt.get().getEnunciado();
-        Path rutaArchivo = Paths.get(UPLOAD_DIR).resolve(nombreArchivo);
-        
         try {
-            Resource recurso = new UrlResource(rutaArchivo.toUri());
-            
-            // Convertir a UrlResource antes de llamar a isReadable()
-            if (!(recurso instanceof UrlResource) || !((UrlResource) recurso).isReadable()) {
+            // 1️⃣ Buscar la prueba en la base de datos
+            Optional<Prueba> pruebaOpt = repository.findById(id);
+    
+            if (pruebaOpt.isEmpty() || pruebaOpt.get().getEnunciado() == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
     
+            Prueba prueba = pruebaOpt.get();
+            String nombreArchivo = prueba.getEnunciado(); // Ejemplo: "6c6f683d-c470-4dff-a135-f4de706ccdde_enunciado1.pdf"
+    
+            // 2️⃣ Construir la ruta correcta
+            Path path = Paths.get("uploads/" + nombreArchivo);
+            Resource resource = new UrlResource(path.toUri());
+    
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+    
+            // 3️⃣ Devolver el archivo con cabecera de descarga
             return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM) // Para soportar múltiples formatos
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"")
-                    .body(recurso);
+                    .body(resource);
     
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-    }
-    
+    }    
 
     public List<PruebaDTO> obtenerPruebasPorEspecialidad(Long especialidadId) {
         return repository.findByEspecialidad_IdEspecialidad(especialidadId).stream()

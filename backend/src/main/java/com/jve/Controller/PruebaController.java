@@ -1,5 +1,6 @@
 package com.jve.Controller;
 
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jve.Service.PruebaService;
 import com.jve.dto.PruebaDTO;
 
-import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
@@ -69,7 +69,6 @@ public class PruebaController {
     }
 
     @GetMapping("/descargar/{id}")
-    @PreAuthorize("hasAuthority('experto')")
     public ResponseEntity<Resource> descargarEnunciado(@PathVariable Long id) {
         return pruebaService.descargarEnunciado(id);
     }
