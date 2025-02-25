@@ -40,7 +40,6 @@ public class PruebaController {
         }
     
         try {
-            // Crear DTO con la información
             PruebaDTO pruebaDTO = new PruebaDTO();
             pruebaDTO.setIdEspecialidad(especialidadId);
             pruebaDTO.setPuntuacionMaxima(puntuacionMaxima);

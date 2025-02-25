@@ -78,19 +78,18 @@ public class PruebaService {
     }
 
     public String guardarArchivo(MultipartFile archivo) throws IOException {
-        String nombreArchivo = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename();
+        String nombreArchivo = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename(); // Identificador único
         Path rutaArchivo = Paths.get(UPLOAD_DIR).resolve(nombreArchivo);
         
         // Crear el directorio si no existe
         Files.createDirectories(rutaArchivo.getParent());
         Files.copy(archivo.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
 
-        return nombreArchivo; // Retorna el nombre del archivo para guardar en la BD
+        return nombreArchivo;
     }
 
     public ResponseEntity<Resource> descargarEnunciado(Long id) {
         try {
-            // 1️⃣ Buscar la prueba en la base de datos
             Optional<Prueba> pruebaOpt = repository.findById(id);
     
             if (pruebaOpt.isEmpty() || pruebaOpt.get().getEnunciado() == null) {
@@ -100,7 +99,6 @@ public class PruebaService {
             Prueba prueba = pruebaOpt.get();
             String nombreArchivo = prueba.getEnunciado(); // Ejemplo: "6c6f683d-c470-4dff-a135-f4de706ccdde_enunciado1.pdf"
     
-            // 2️⃣ Construir la ruta correcta
             Path path = Paths.get("uploads/" + nombreArchivo);
             Resource resource = new UrlResource(path.toUri());
     
@@ -108,9 +106,8 @@ public class PruebaService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
     
-            // 3️⃣ Devolver el archivo con cabecera de descarga
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"") // Cabecera de descarga
                     .body(resource);
     
         } catch (Exception e) {

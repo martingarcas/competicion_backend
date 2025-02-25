@@ -26,15 +26,13 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
-        // Si el rol es nulo, lo dejamos como "experto" por defecto
         if (userDTO.getRole() == null || userDTO.getRole().isEmpty()) {
             userDTO.setRole("experto");
         }
 
-        // Guardamos el usuario sin especialidad para admins
         Especialidad especialidad = null;
         if (userDTO.getEspecialidadId() != null) {
-            especialidad = especialidadRepository.findById(userDTO.getEspecialidadId()).orElse(null);
+            especialidad = especialidadRepository.findById(userDTO.getEspecialidadId()).orElse(null); // Para usuarios admin no hay especialidad
         }
 
         UserDTO newUser = userService.createUser(userDTO, especialidad);
@@ -45,7 +43,7 @@ public class UserController {
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<UserResponseDTO> users = userService.getAllUsers()
             .stream()
-            .map(userConverter::toResponseDTO) // 🔹 Convertimos a UserResponseDTO
+            .map(userConverter::toResponseDTO)
             .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
@@ -53,7 +51,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
-                .map(userConverter::toResponseDTO) // 🔹 Convertimos a UserResponseDTO
+                .map(userConverter::toResponseDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -75,7 +73,7 @@ public class UserController {
     public ResponseEntity<List<UserResponseDTO>> getAllExperts() {
         List<UserResponseDTO> experts = userService.getAllExperts()
             .stream()
-            .map(userConverter::toResponseDTO) // 🔹 Convertimos a UserResponseDTO
+            .map(userConverter::toResponseDTO)
             .collect(Collectors.toList());
         return ResponseEntity.ok(experts);
     }

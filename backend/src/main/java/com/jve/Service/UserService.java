@@ -23,11 +23,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EspecialidadRepository especialidadRepository;
 
-    public List<User> getAllUsers() {  // 🔹 Devuelve User en vez de UserDTO
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Long id) {  // 🔹 Devuelve Optional<User>
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -37,13 +37,13 @@ public class UserService {
             user.setRole("experto");
         }
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setEspecialidad(especialidad); // Asigna la especialidad al usuario
+        user.setEspecialidad(especialidad);
         User savedUser = userRepository.save(user);
         return userConverter.toDTO(savedUser);
     }
 
     public List<User> getAllExperts() {
-        return userRepository.findByRole("experto");  // 🔹 Filtrar solo expertos
+        return userRepository.findByRole("experto");
     }
 
     public Optional<UserResponseDTO> updateUser(Long id, UserDTO userDTO) {

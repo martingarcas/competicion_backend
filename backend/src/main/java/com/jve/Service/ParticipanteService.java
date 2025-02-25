@@ -47,7 +47,7 @@ public class ParticipanteService {
         participante.setNombre(participanteDTO.getNombre());
         participante.setApellidos(participanteDTO.getApellidos());
         participante.setCentro(participanteDTO.getCentro());
-        participante.setEspecialidad(especialidad); // Aquí asignamos la especialidad encontrada
+        participante.setEspecialidad(especialidad);
 
         Participante savedParticipante = repository.save(participante);
         return converter.toDTO(savedParticipante);
@@ -61,7 +61,6 @@ public class ParticipanteService {
             existingParticipante.setApellidos(participanteDTO.getApellidos());
             existingParticipante.setCentro(participanteDTO.getCentro());
 
-            // Buscar la especialidad antes de asignarla
             if (participanteDTO.getEspecialidadId() != null) {
                 Especialidad especialidad = especialidadRepository.findById(participanteDTO.getEspecialidadId())
                         .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));

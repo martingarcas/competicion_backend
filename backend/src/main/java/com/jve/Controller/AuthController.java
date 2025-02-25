@@ -34,11 +34,9 @@ public class AuthController {
 
     @PostMapping("/auth/register")
     public UserDTO save(@RequestBody UserDTO userDTO){
-        // Buscar la especialidad en la base de datos
         Especialidad especialidad = especialidadRepository.findById(userDTO.getEspecialidadId())
                 .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
 
-        // Llamar a createUser con la especialidad
         return this.userService.createUser(userDTO, especialidad);
     }
 
@@ -47,18 +45,14 @@ public class AuthController {
         try {
             Authentication authDTO = new UsernamePasswordAuthenticationToken(loginDTO.username(), loginDTO.password());
 
-            // Se realiza la autenticación
             Authentication authentication = this.authManager.authenticate(authDTO);
             User user = (User) authentication.getPrincipal();
 
-            // Generamos el token
             String token = this.jwtTokenProvider.generateToken(authentication);
 
-            // Obtener el ID de la especialidad
             Long especialidadId = (user.getEspecialidad() != null) ? user.getEspecialidad().getIdEspecialidad() : null;
             String especialidadNombre = (user.getEspecialidad() != null) ? user.getEspecialidad().getNombre() : null;
 
-            // Retornamos la respuesta de login con la especialidad incluida
             return new LoginResponse(user.getUsername(),
                     user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList(),
                     token,

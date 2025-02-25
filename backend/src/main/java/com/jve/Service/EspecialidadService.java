@@ -67,7 +67,7 @@ public class EspecialidadService {
     public List<UserResponseDTO> obtenerUsuariosPorEspecialidad(Long id) {
         return repository.findById(id)
                 .map(especialidad -> especialidad.getUsuarios().stream()
-                        .map(userConverter::toResponseDTO) // ✅ Usamos el UserConverter
+                        .map(userConverter::toResponseDTO)
                         .collect(Collectors.toList()))
                 .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
     }

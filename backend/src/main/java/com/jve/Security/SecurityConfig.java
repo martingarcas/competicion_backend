@@ -43,7 +43,13 @@ public class SecurityConfig {
             .and()
             .csrf(CsrfConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/api/participantes").permitAll()
+                .requestMatchers("/api/participantes/**").hasAuthority("ROLE_EXPERTO")
+                .requestMatchers("/api/especialidades").permitAll()
+                .requestMatchers("/api/users/expertos").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/pruebas/**").hasAuthority("ROLE_EXPERTO") 
+                .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
