@@ -56,12 +56,14 @@ public class AuthController {
 
             // Obtener el ID de la especialidad
             Long especialidadId = (user.getEspecialidad() != null) ? user.getEspecialidad().getIdEspecialidad() : null;
+            String especialidadNombre = (user.getEspecialidad() != null) ? user.getEspecialidad().getNombre() : null;
 
             // Retornamos la respuesta de login con la especialidad incluida
             return new LoginResponse(user.getUsername(),
                     user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList(),
                     token,
-                    especialidadId);
+                    especialidadId,
+                    especialidadNombre);
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Credenciales incorrectas", e);
         }

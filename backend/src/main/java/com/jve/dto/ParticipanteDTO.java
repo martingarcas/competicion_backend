@@ -13,4 +13,5 @@ public class ParticipanteDTO {
     private String apellidos;
     private String centro;
     private Long especialidadId;
+    private String especialidadNombre;
 }

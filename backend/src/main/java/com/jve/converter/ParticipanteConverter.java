@@ -12,7 +12,8 @@ public class ParticipanteConverter {
                 participante.getNombre(),
                 participante.getApellidos(),
                 participante.getCentro(),
-                (participante.getEspecialidad() != null) ? participante.getEspecialidad().getIdEspecialidad() : null
+                (participante.getEspecialidad() != null) ? participante.getEspecialidad().getIdEspecialidad() : null,
+                (participante.getEspecialidad() != null) ? participante.getEspecialidad().getNombre() : null
         );
     }
 
@@ -22,6 +23,7 @@ public class ParticipanteConverter {
         participante.setNombre(dto.getNombre());
         participante.setApellidos(dto.getApellidos());
         participante.setCentro(dto.getCentro());
+        dto.setEspecialidadNombre(participante.getEspecialidad().getNombre());
         return participante;
     }
 }
