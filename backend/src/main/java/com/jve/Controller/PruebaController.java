@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jve.Service.PruebaService;
+import com.jve.dto.ItemDTO;
 import com.jve.dto.PruebaDTO;
 
 import lombok.AllArgsConstructor;
@@ -33,7 +34,8 @@ public class PruebaController {
     public ResponseEntity<?> create(
             @RequestParam("especialidadId") Long especialidadId,
             @RequestParam("puntuacionMaxima") Integer puntuacionMaxima,
-            @RequestParam("enunciado") MultipartFile enunciado) {
+            @RequestParam("enunciado") MultipartFile enunciado,
+            @RequestPart(value = "items", required = false) List<ItemDTO> items) {
     
         if (enunciado.isEmpty()) {
             return ResponseEntity.badRequest().body("El enunciado de la prueba es obligatorio.");
@@ -44,7 +46,7 @@ public class PruebaController {
             pruebaDTO.setIdEspecialidad(especialidadId);
             pruebaDTO.setPuntuacionMaxima(puntuacionMaxima);
     
-            PruebaDTO savedPrueba = pruebaService.create(pruebaDTO, enunciado);
+            PruebaDTO savedPrueba = pruebaService.create(pruebaDTO, enunciado, items);
             return ResponseEntity.status(201).body(savedPrueba);
     
         } catch (Exception e) {
