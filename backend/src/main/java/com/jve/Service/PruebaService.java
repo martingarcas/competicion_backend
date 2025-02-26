@@ -80,9 +80,9 @@ public class PruebaService {
 
             int sumaPesos = items.stream().mapToInt(ItemDTO::getPeso).sum();
 
-            if (sumaPesos > pruebaDTO.getPuntuacionMaxima()) {
+            if (sumaPesos != pruebaDTO.getPuntuacionMaxima()) {
                 throw new RuntimeException("La suma de los pesos de los ítems (" + sumaPesos +
-                        ") no puede ser mayor que la puntuación máxima de la prueba (" + pruebaDTO.getPuntuacionMaxima() + ").");
+                        ") debe ser igual a la puntuación máxima de la prueba (" + pruebaDTO.getPuntuacionMaxima() + ").");
             }
 
             for (ItemDTO itemDTO : items) {

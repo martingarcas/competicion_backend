@@ -3,6 +3,11 @@ package com.jve.Controller;
 import com.jve.dto.LoginRequest;
 import com.jve.dto.LoginResponse;
 import com.jve.dto.UserDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import com.jve.Entity.Especialidad;
 import com.jve.Entity.User;
 import com.jve.Repository.EspecialidadRepository;
@@ -33,6 +38,11 @@ public class AuthController {
 
 
     @PostMapping("/auth/register")
+    @Operation(summary = "Registrar un nuevo usuario", description = "Permite registrar un nuevo usuario en el sistema, asignándole una especialidad.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos o especialidad no encontrada")
+    })
     public UserDTO save(@RequestBody UserDTO userDTO){
         Especialidad especialidad = especialidadRepository.findById(userDTO.getEspecialidadId())
                 .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
@@ -40,7 +50,13 @@ public class AuthController {
         return this.userService.createUser(userDTO, especialidad);
     }
 
+    
     @PostMapping("/auth/login")
+    @Operation(summary = "Autenticar usuario", description = "Permite iniciar sesión y obtener un token JWT si las credenciales son correctas.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Autenticación exitosa, devuelve un token JWT"),
+        @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
+    })
     public LoginResponse login(@RequestBody LoginRequest loginDTO) {
         try {
             Authentication authDTO = new UsernamePasswordAuthenticationToken(loginDTO.username(), loginDTO.password());
