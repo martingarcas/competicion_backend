@@ -1,38 +1,70 @@
 package com.jve.Service;
 
+import com.jve.Entity.Evaluacion;
 import com.jve.Entity.EvaluacionItem;
+import com.jve.Entity.Item;
 import com.jve.Repository.EvaluacionItemRepository;
-import lombok.AllArgsConstructor;
+import com.jve.Repository.EvaluacionRepository;
+import com.jve.Repository.ItemRepository;
+import com.jve.converter.EvaluacionItemConverter;
+import com.jve.dto.EvaluacionItemDTO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class EvaluacionItemService {
 
-    private final EvaluacionItemRepository repository;
+    @Autowired
+    private EvaluacionItemRepository evaluacionItemRepository;
+    
+    @Autowired
+    private EvaluacionRepository evaluacionRepository;
 
-    public List<EvaluacionItem> findAll() {
-        return repository.findAll();
+    @Autowired
+    private ItemRepository itemRepository;
+    
+    @Autowired
+    private EvaluacionItemConverter evaluacionItemConverter;
+
+    public List<EvaluacionItemDTO> findAll() {
+        return evaluacionItemRepository.findAll().stream()
+                .map(evaluacionItemConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<EvaluacionItem> findById(Long id) {
-        return repository.findById(id);
+    public Optional<EvaluacionItemDTO> findById(Long id) {
+        return evaluacionItemRepository.findById(id)
+                .map(evaluacionItemConverter::toDTO);
     }
 
-    public EvaluacionItem create(EvaluacionItem evaluacionItem) {
-        return repository.save(evaluacionItem);
-    }
+    public EvaluacionItemDTO create(EvaluacionItemDTO evaluacionItemDTO) {
+        // Obtener la Evaluacion y el Item desde sus respectivos repositorios
+        Optional<Evaluacion> evaluacionOptional = evaluacionRepository.findById(evaluacionItemDTO.getIdEvaluacion());
+        Optional<Item> itemOptional = itemRepository.findById(evaluacionItemDTO.getIdItem());
 
-    public Optional<EvaluacionItem> update(Long id, EvaluacionItem evaluacionItem) {
-        return repository.findById(id).map(existingEvaluacionItem -> {
-            existingEvaluacionItem.setValoracion(evaluacionItem.getValoracion());
-            return repository.save(existingEvaluacionItem);
-        });
-    }
+        if (evaluacionOptional.isPresent() && itemOptional.isPresent()) {
+            Evaluacion evaluacion = evaluacionOptional.get();
+            Item item = itemOptional.get();
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+            // Crear el EvaluacionItem
+            EvaluacionItem evaluacionItem = evaluacionItemConverter.toEntity(evaluacionItemDTO);
+
+            // Asignar la Evaluacion y el Item a EvaluacionItem
+            evaluacionItem.setEvaluacion(evaluacion);
+            evaluacionItem.setItem(item);
+
+            // Guardar el EvaluacionItem
+            EvaluacionItem savedEvaluacionItem = evaluacionItemRepository.save(evaluacionItem);
+            
+            return evaluacionItemConverter.toDTO(savedEvaluacionItem);
+        } else {
+            // Si no se encuentra Evaluacion o Item, devolver null o lanzar excepción
+            return null;
+        }
     }
 }
